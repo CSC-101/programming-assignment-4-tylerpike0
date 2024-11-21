@@ -39,7 +39,7 @@ def population_by_education(demographics: list[CountyDemographics],education_key
     for demographic in demographics:
         if education_key in demographic.education.keys():
             percentage = demographic.education[education_key]
-            total += percentage * demographic.population["2014 Population"]
+            total += percentage * demographic.population["2014 Population"] * 0.01
     return total
 
 # returns the total population fo a given ethnicity in a given list of demographics
@@ -50,7 +50,7 @@ def population_by_ethnicity(demographics: list[CountyDemographics],ethnicity_key
     for demographic in demographics:
         if ethnicity_key in demographic.ethnicities.keys():
             percentage = demographic.ethnicities[ethnicity_key]
-            total += percentage * demographic.population["2014 Population"]
+            total += percentage * demographic.population["2014 Population"] * 0.01
     return total
 
 # returns the total population fo a given ethnicity in a given list of demographics
@@ -61,7 +61,7 @@ def population_by_income(demographics: list[CountyDemographics],income_key: str 
     for demographic in demographics:
         if income_key in demographic.income.keys():
             percentage = demographic.income[income_key]
-            total += percentage * demographic.population["2014 Population"]
+            total += percentage * demographic.population["2014 Population"] * 0.01
     return total
 
 # returns the total population below the poverty level in a given list of demographics
@@ -71,7 +71,7 @@ def population_below_poverty_level(demographics: list[CountyDemographics]) -> fl
     total = 0
     for demographic in demographics:
         percentage = demographic.income["Persons Below Poverty Level"]
-        total += percentage * demographic.population["2014 Population"]
+        total += percentage * demographic.population["2014 Population"] * 0.01
     return total
 
 # Part 4
@@ -80,19 +80,19 @@ def population_below_poverty_level(demographics: list[CountyDemographics]) -> fl
 def percent_by_education(demographics: list[CountyDemographics], education_key: str) -> float:
     if len(demographics) == 0:
         return 0
-    return population_by_education(demographics, education_key) / population_total(demographics)
+    return population_by_education(demographics, education_key) / population_total(demographics) * 100
 
 # returns the percent of a population of given demographics which are of a given ethnicity
 def percent_by_ethnicity(demographics: list[CountyDemographics], ethnicity_key: str) -> float:
     if len(demographics) == 0:
         return 0
-    return population_by_ethnicity(demographics, ethnicity_key) / population_total(demographics)
+    return population_by_ethnicity(demographics, ethnicity_key) / population_total(demographics) * 100
 
 # returns the percent of a population of given demographics which are of a given ethnicity
 def percent_by_income(demographics: list[CountyDemographics], income_key: str) -> float:
     if len(demographics) == 0:
         return 0
-    return population_by_income(demographics, income_key) / population_total(demographics)
+    return population_by_income(demographics, income_key) / population_total(demographics) * 100
 
 
 # returns the percent a population of given demographics which is below the poverty level
@@ -102,7 +102,7 @@ def percent_below_poverty_level(demographics: list[CountyDemographics]) -> float
     total_population = population_total(demographics)
     if total_population == 0:
         return 0
-    return  population_below_poverty_level(demographics) / total_population
+    return  population_below_poverty_level(demographics) / total_population * 100
 
 # Part 5
 

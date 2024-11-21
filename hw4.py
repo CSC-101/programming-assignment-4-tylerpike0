@@ -10,7 +10,6 @@ from data import CountyDemographics
 
 
 def operate_line(line_index: int, line: str, current_data_set: list[CountyDemographics]) -> list[CountyDemographics]:
-    print("Line:", line_index + 1)
     operation_and_args = line.split(":")
 
     operation = operation_and_args[0]
@@ -24,7 +23,8 @@ def operate_line(line_index: int, line: str, current_data_set: list[CountyDemogr
     if len(operation_and_args) > 1:
         fields = operation_and_args[1].split(".")
         category = fields[0]
-        key = fields[1]
+        if len(fields) > 1:
+            key = fields[1]
 
     if len(operation_and_args) > 2:
         try:
@@ -42,7 +42,7 @@ def operate_line(line_index: int, line: str, current_data_set: list[CountyDemogr
         display(current_data_set)
         return current_data_set
 
-    if operation == "display":
+    if operation == "filter-state":
         if category:
             return filter_state(current_data_set, line.strip("filter-state:"))
         else:
@@ -121,21 +121,42 @@ def filter_state(data_set: list[CountyDemographics], state: str) -> list[CountyD
 def filter_gt(data_set: list[CountyDemographics], category: str, key: str, number:float) -> list[CountyDemographics]:
 
     filtered_demographics = []
+
     for county in data_set:
         if category == "Age":
-            if county.age[key] > number:
-                filtered_demographics.append(county)
+            if key in county.age:
+                if county.age[key] > number:
+                    filtered_demographics.append(county)
+            else:
+                print("Invalid key '{}'".format(key))
+                return data_set
         elif category == "Education":
-            if county.education[key] > number:
-                filtered_demographics.append(county)
+            if key in county.education:
+                if county.education[key] > number:
+                    filtered_demographics.append(county)
+            else:
+                print("Invalid key '{}'".format(key))
+                return data_set
         elif category == "Ethnicities":
-            if county.ethnicities[key] > number:
-                filtered_demographics.append(county)
+            if key in county.ethnicities:
+                if county.ethnicities[key] > number:
+                    filtered_demographics.append(county)
+            else:
+                print("Invalid key '{}'".format(key))
+                return data_set
         elif category == "Income":
-            if county.income[key] > number:
-                filtered_demographics.append(county)
+            if key in county.age:
+                if county.income[key] > number:
+                    filtered_demographics.append(county)
+            else:
+                print("Invalid key '{}'".format(key))
+                return data_set
+        else:
+            print ("Argument '{}' does not match any categories".format(category))
+            return data_set
 
-    print("Filter: {} gt {} ({} entries)".format(key, number, len(filtered_demographics)))
+
+    print("Filter: {}.{} gt {} ({} entries)".format(category, key, number, len(filtered_demographics)))
     return filtered_demographics
 
 def filter_lt(data_set: list[CountyDemographics], category: str, key:str, number: float) -> list[CountyDemographics]:
@@ -170,8 +191,11 @@ def filter_lt(data_set: list[CountyDemographics], category: str, key:str, number
             else:
                 print("Invalid key '{}'".format(key))
                 return data_set
+        else:
+            print ("Argument '{}' does not match any categories".format(category))
+            return data_set
 
-    print("Filter: {} lt {} ({} entries)".format(category, number, len(filtered_demographics)))
+    print("Filter: {}.{} lt {} ({} entries)".format(category, key, number, len(filtered_demographics)))
     return filtered_demographics
 
 def population_total(data_set: list[CountyDemographics]) -> None:
@@ -179,19 +203,19 @@ def population_total(data_set: list[CountyDemographics]) -> None:
 
 def population_subtotal(data_set: list[CountyDemographics], category: str, key: str) -> None:
     if category == "Education":
-        print("2014 Education.{} population: {}".format(key,hw3.population_by_education(data_set, key)))
+        print("2014 {}.{} population: {}".format(category, key,hw3.population_by_education(data_set, key)))
     elif category == "Ethnicities":
-        print("2014 Ethnicities.{} population: {}".format(key,hw3.population_by_ethnicity(data_set, key)))
+        print("2014 {}.{} population: {}".format(category, key,hw3.population_by_ethnicity(data_set, key)))
     elif category == "Income":
-        print("2014 Income.{} population: {}".format(key,hw3.population_by_income(data_set, key)))
+        print("2014 {}.{} population: {}".format(category, key,hw3.population_by_income(data_set, key)))
 
 def population_subtotal_percentage(data_set: list[CountyDemographics], category: str, key: str) -> None:
     if category == "Education":
-        print("2014 {} percentage: {}%".format(key, round(hw3.percent_by_education(data_set, key),2)))
+        print("2014 {}.{} percentage: {}%".format(category, key, round(hw3.percent_by_education(data_set, key),2)))
     elif category == "Ethnicities":
-        print("2014 {} percentage: {}%".format(key, round(hw3.percent_by_ethnicity(data_set, key),2)))
+        print("2014 {}.{} percentage: {}%".format(category, key, round(hw3.percent_by_ethnicity(data_set, key),2)))
     elif category == "Income":
-        print("2014 {} percentage: {}%".format(key, round(hw3.percent_by_income(data_set, key),2)))
+        print("2014 {}.{} percentage: {}%".format(category, key, round(hw3.percent_by_income(data_set, key),2)))
 
 
 demographics = build_data.get_data()
